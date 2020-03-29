@@ -5,7 +5,7 @@ close all
 clc
 %%
 %%%1. Generate a signal that consists of a sum of sine waves of frequencies 1 to 50 kHz. Set t to be
-%%% from 0 to 2 seconds, using an interval of 10µs.
+%%% from 0 to 2 seconds, using an interval of 10Âµs.
 t = 0:10^(-5):0.001;
 f = (1:50)*1000;
 signal = sum(sin(2*pi*f'.*t), 1);
