@@ -1,0 +1,90 @@
+%Yuval Epstain Ofek - MATLAB assignment 4:
+clear;
+close all; 
+clc;
+%Want to thank Michael Lendino for helping me come up with the isOrthonormal
+%funtion
+%%
+close all;
+clear;
+%%% Testing: 
+%%%NOTE: This will run a number of tests using a loop
+
+n = 5 % number of vectors equals vector length
+m = 3 % number of vectors < vector length
+
+vector = rand (n,1);                    %Generates a complex vector
+Mat = rand(n,n)+ 1j*rand(n,n);          %Generates complex matrix
+Mat2 = rand(n,m)+ 1j*rand(n,m);          %Generates complex matrix
+GS = gramSchmidt(Mat);                  
+Check = isOrthonormal(GS);
+proj1 = orthoProj(vector, GS);          %Finds projection onto the span of the orthonormal set
+error1 = norm(proj1 - Mat);             %Calculates error in the projection
+    
+ %%%Looking through at the  it is obvious that the more vectors there
+%%%are in the orthonormal set, the closer the approximation is to the
+%%%vector.
+
+%%%A visualization of the errors as a function of the difference in the
+%%%number of vectors: --->Not needed but I thought this was fun so I
+%%%included it :)
+[X,Y] = meshgrid (1:testNum);
+figure;
+surf(X,Y,ErrorD)
+title('Error Differences as a Function of Vector Length and Difference in Number of Vectors')
+xlabel('Vector Lengths')
+ylabel('Difference of estimating # of vectors to vector length')
+zlabel('Error Differences: Error(#Elem = #Vect) - Error(#Elem < #Vect)') 
+
+%%
+close all;
+SampNum = 50;
+spl = linspace(0,2*pi,SampNum);
+sinS = sin(spl);
+mu = linspace(0, 2*pi, 5);
+
+%Generating points
+[X,Y] = ndgrid(spl, mu);
+gauss = 1/(sqrt(2*pi))*exp(-(X-Y).^2);   %Columns represent each curve
+
+%Plotting
+figure;
+plot(spl, sinS, spl, gauss(:,1), spl, gauss(:,2), spl, gauss(:,3), spl, gauss(:,4), spl, gauss(:,5))
+legend('Sine', 'Gaussian with \mu = \pi/2', 'Gaussian with \mu = \pi', 'Gaussian with \mu = 3\pi/2', 'Gaussian with \mu = 2\pi')
+xlabel('x')
+ylabel('f(x)')
+title('Plot of the Sinusoid and Gaussian Curves (\sigma = 1)')
+grid on
+xticks(linspace(0, 2*pi, 5))
+xticklabels({'0','\pi/2','\pi', '3\pi/2','2\pi'})
+xlim([0, 2*pi])
+
+%Finding orthonormal set and projection
+orth = gramSchmidt(gauss);
+estimate = orthoProj(sinS.', orth).';
+
+%Plotting
+figure;
+subplot(2,1,1)
+plot(spl, sinS, 'DisplayName', 'sin(x)')
+hold on;
+plot(spl, estimate.', 'DisplayName', 'sine estimate')
+legend('show')
+grid on
+title('Estimated Sine Function Plotted Alongside a Sine Function')
+xlabel('x')
+ylabel('f(x)')
+xticks(linspace(0, 2*pi, 5))
+xticklabels({'0','\pi/2','\pi', '3\pi/2','2\pi'})
+xlim([0, 2*pi])
+
+
+subplot(2,1,2)
+plot(spl, orth(:,1).', spl, orth(:,2).',spl, orth(:,3).', spl, orth(:,4).', spl, orth(:,5).' )
+grid on
+title('Orthonormal Basis Functions Used in Estimation')
+xlabel('x')
+ylabel('f(x)')
+xticks(linspace(0, 2*pi, 5))
+xticklabels({'0','\pi/2','\pi', '3\pi/2','2\pi'})
+xlim([0, 2*pi])
